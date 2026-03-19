@@ -1,4 +1,5 @@
 rootProject.name = 'msa_saga'
 
 include 'api-orders'
+include 'api-payment'
 include 'api-product'

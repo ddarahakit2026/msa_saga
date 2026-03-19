@@ -20,7 +20,7 @@ const paymentStatus = ref({
 const getproductList = async () => {
   const res = await axios.get('http://localhost:8083/product/list')
   if (res.data) {
-    productList.value = (res.data || []).map(p => ({ ...p, quantity: 1 }))
+    productList.value = (res.data || []).map(p => ({...p, quantity: 1}))
   }
 }
 
@@ -55,7 +55,7 @@ const onPayment = async () => {
   // 주문 생성
   const createResponse = await axios.post('http://localhost:8081/orders/create', {
         paymentPrice: totalPrice.value,
-        items: orderItems
+        ordersItems: orderItems
       }
   )
 
@@ -65,8 +65,8 @@ const onPayment = async () => {
   const paymentId = Math.floor(Math.random() * 101);
   // 결제창 띄우기
   const payment = await PortOne.requestPayment({
-    storeId: "store-a98~~~",
-    channelKey: "channel-key-996~~~",
+    storeId: "store-a98efd4b-3978-4db3-ac72-59949fba4f1e",
+    channelKey: "channel-key-996b09cf-d516-4091-8e08-5882ef3479f8",
     paymentId: "imp_923865ifdg7ig" + paymentId,
     orderName: orderName,
     totalAmount: totalPrice.value,
@@ -84,7 +84,7 @@ const onPayment = async () => {
     paymentId: payment.paymentId,
     ordersIdx: ordersIdx
   })
-  }
+}
 
 onMounted(async () => {
   await getproductList()
