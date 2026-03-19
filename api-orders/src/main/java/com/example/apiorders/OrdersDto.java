@@ -1,11 +1,22 @@
 package com.example.apiorders;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
 public class OrdersDto {
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Payment {
+        private Long idx;
+        private Long ordersIdx;
+        private String pgPaymentId;
+        private int amount;
+        private String status; // PAID, CANCELLED
+    }
+
     @Builder
     @Getter
     public static class OrdersItemReq {
@@ -21,6 +32,8 @@ public class OrdersDto {
         }
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @Getter
     public static class OrdersItemRes {
@@ -64,6 +77,8 @@ public class OrdersDto {
     }
 
 
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @Getter
     public static class OrdersRes {

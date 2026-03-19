@@ -14,6 +14,8 @@ public class PaymentDto {
         private Long ordersIdx;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @Getter
     public static class OrdersItemRes {
@@ -22,7 +24,8 @@ public class PaymentDto {
         private int quantity;
     }
 
-
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @Getter
     public static class OrdersRes {

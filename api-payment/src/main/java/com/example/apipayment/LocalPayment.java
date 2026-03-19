@@ -18,6 +18,7 @@ public class LocalPayment {
     private Long ordersIdx;
     private String pgPaymentId;
     private int amount;
+    @Setter
     private String status; // PAID, CANCELLED
 }
 

@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductRepository productRepository;
-    private final KafkaTemplate<Long, Long> kafkaTemplate;
+    private final KafkaTemplate<Long, ProductDto.OrdersRes> kafkaTemplate;
 
 
     // payment-completed 이벤트를 받았을 때 재고 차감 로직 구현
@@ -43,9 +43,9 @@ public class ProductController {
 
                 product.reduceStock(item.getQuantity());
             }
-            kafkaTemplate.send("product-stock-reduced", dto.getIdx(), dto.getIdx());
+            kafkaTemplate.send("product-stock-reduced", dto.getIdx(), dto);
         } catch (Exception e) {
-            kafkaTemplate.send("orders-failed", dto.getIdx(), dto.getIdx());
+            kafkaTemplate.send("product-stock-reduce-failed", dto.getIdx(), dto);
         }
     }
 

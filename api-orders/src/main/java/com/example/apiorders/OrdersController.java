@@ -17,13 +17,28 @@ import org.springframework.web.bind.annotation.*;
 public class OrdersController {
     private final OrdersRepository ordersRepository;
 
-    @KafkaListener(topics = "product-stock-reduced", groupId = "orders-group-1")
+    // api-payment로부터 payment-canceled 이벤트를 받으면 해당 주문 취소 처리
+    @KafkaListener(topics = "payment-canceled", groupId = "orders-group-1",
+            properties = "spring.json.value.default.type:com.example.apiorders.OrdersDto.Payment")
     @Transactional
-    public void consume(
+    public void ordersFailedConsume(
             @Header(KafkaHeaders.RECEIVED_KEY) Long key,
-            @Payload Long ordersIdx
+            @Payload OrdersDto.Payment dto
     ) {
-        Orders orders = ordersRepository.findById(ordersIdx).orElseThrow();
+        Orders orders = ordersRepository.findById(dto.getOrdersIdx()).orElseThrow();
+        orders.setStatus("CANCEL");
+    }
+
+
+    // api-product로부터 product-stock-reduced 이벤트를 받으면 해당 주문 완료 처리
+    @KafkaListener(topics = "product-stock-reduced", groupId = "orders-group-1",
+            properties = "spring.json.value.default.type:com.example.apiorders.OrdersDto.OrdersRes")
+    @Transactional
+    public void productStockReducedConsume(
+            @Header(KafkaHeaders.RECEIVED_KEY) Long key,
+            @Payload OrdersDto.OrdersRes dto
+    ) {
+        Orders orders = ordersRepository.findById(dto.getIdx()).orElseThrow();
         orders.setStatus("COMPLETE");
     }
 
