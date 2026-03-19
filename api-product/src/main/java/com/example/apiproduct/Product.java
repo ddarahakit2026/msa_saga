@@ -22,4 +22,12 @@ public class Product{
     private String name;
     private int price;
     private int stock;
+
+    public void reduceStock(int quantity) {
+        int restStock = this.stock - quantity;
+        if (restStock < 0) {
+            throw new RuntimeException("재고 부족");
+        }
+        this.stock = restStock;
+    }
 }
