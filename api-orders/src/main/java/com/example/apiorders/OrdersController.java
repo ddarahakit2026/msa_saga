@@ -1,7 +1,13 @@
 package com.example.apiorders;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(originPatterns = "*")
@@ -11,6 +17,31 @@ import org.springframework.web.bind.annotation.*;
 public class OrdersController {
     private final OrdersRepository ordersRepository;
 
+    // api-payment로부터 payment-canceled 이벤트를 받으면 해당 주문 취소 처리
+    @KafkaListener(topics = "payment-canceled", groupId = "orders-group-1",
+            properties = "spring.json.value.default.type:com.example.apiorders.OrdersDto.Payment")
+    @Transactional
+    public void ordersFailedConsume(
+            @Header(KafkaHeaders.RECEIVED_KEY) Long key,
+            @Payload OrdersDto.Payment dto
+    ) {
+        Orders orders = ordersRepository.findById(dto.getOrdersIdx()).orElseThrow();
+        orders.setStatus("CANCEL");
+    }
+
+
+    // api-product로부터 product-stock-reduced 이벤트를 받으면 해당 주문 완료 처리
+    @KafkaListener(topics = "product-stock-reduced", groupId = "orders-group-1",
+            properties = "spring.json.value.default.type:com.example.apiorders.OrdersDto.OrdersRes")
+    @Transactional
+    public void productStockReducedConsume(
+            @Header(KafkaHeaders.RECEIVED_KEY) Long key,
+            @Payload OrdersDto.OrdersRes dto
+    ) {
+        Orders orders = ordersRepository.findById(dto.getIdx()).orElseThrow();
+        orders.setStatus("COMPLETE");
+    }
+
     @PostMapping("/create")
     public ResponseEntity create(
             @RequestBody OrdersDto.OrdersReq dto) {
@@ -18,5 +49,13 @@ public class OrdersController {
 
         return ResponseEntity.ok(OrdersDto.OrdersRes.from(result));
     }
+
+    @GetMapping("/{ordersIdx}")
+    public ResponseEntity get(@PathVariable Long ordersIdx) {
+        Orders result =  ordersRepository.findById(ordersIdx).orElseThrow();
+
+        return ResponseEntity.ok(OrdersDto.OrdersRes.from(result));
+    }
+
 
 }
