@@ -1,8 +1,16 @@
+portone:
+  portone_secret: ${PORTONE_SECRET}
+
 server:
   port: 8082
 spring:
   application:
     name: api-orders
+  kafka:
+    bootstrap-servers: 10.10.10.40:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://10.10.10.30:3306/payment_db

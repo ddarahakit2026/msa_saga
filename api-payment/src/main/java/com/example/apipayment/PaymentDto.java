@@ -1,9 +1,8 @@
 package com.example.apipayment;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 public class PaymentDto {
     @Getter
@@ -13,5 +12,32 @@ public class PaymentDto {
     public static class VerifyReq {
         private String paymentId;
         private Long ordersIdx;
+    }
+
+    @Builder
+    @Getter
+    public static class OrdersItemRes {
+        private Long idx;
+        private Long productIdx;
+        private int quantity;
+    }
+
+
+    @Builder
+    @Getter
+    public static class OrdersRes {
+        private Long idx;
+        private Integer paymentPrice;
+        private String status;
+        private List<OrdersItemRes> ordersItems;
+    }
+
+    @Builder
+    @Getter
+    public static class ProductRes {
+            private Long idx;
+            private String name;
+            private int price;
+
     }
 }

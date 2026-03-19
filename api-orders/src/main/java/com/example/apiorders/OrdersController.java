@@ -19,4 +19,12 @@ public class OrdersController {
         return ResponseEntity.ok(OrdersDto.OrdersRes.from(result));
     }
 
+    @GetMapping("/{ordersIdx}")
+    public ResponseEntity get(@PathVariable Long ordersIdx) {
+        Orders result =  ordersRepository.findById(ordersIdx).orElseThrow();
+
+        return ResponseEntity.ok(OrdersDto.OrdersRes.from(result));
+    }
+
+
 }
