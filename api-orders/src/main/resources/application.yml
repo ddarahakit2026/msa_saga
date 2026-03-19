@@ -3,6 +3,13 @@ server:
 spring:
   application:
     name: api-orders
+  kafka:
+    bootstrap-servers: 10.10.10.40:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      group-id: order-group-1 # 모든 컨슈머에 적용되는 기본값
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://10.10.10.30:3306/orders_db
